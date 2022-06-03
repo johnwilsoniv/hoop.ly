@@ -1,13 +1,5 @@
 from peewee import *
-
-db = MySQLDatabase(
-    database="hooply",
-    host="localhost",
-    port=3306,
-    user="root",
-    password="test",
-    # pragmas={"journal_mode": "wal", "cache_size": 10000, "foreign_keys": 1},
-)
+from hooply.market import db
 
 
 class Player(Model):
@@ -48,6 +40,3 @@ class Player(Model):
 # #
 # class Game:
 #     def __init__(self, season_id, game_id, home_team_id, away_team_id, game):
-if __name__ == "__main__":
-    db.connect()
-    db.create_tables([Player])

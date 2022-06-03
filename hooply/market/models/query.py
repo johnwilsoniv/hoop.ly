@@ -41,14 +41,14 @@ class ActivePlayersQuery(StatsQuery):
 
     def get(self):
         try:
-            logger.info("")
+            # logger.info("Creating an active player request to (%s) with parameters (%s)", self.url)
             s = Session()
             resp = s.get(self.url, params=self.params, headers=self.headers)
             data = resp.json()
             records = data.get("resultSets")[0]
             columns, result_set = records.get("headers"), records.get("rowSet")
         except Exception as e:
-            logger.error("Error case.")
+            logger.error("Some error occurred...")
             logger.error(e)
             exit(1)
         finally:
