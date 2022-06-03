@@ -11,32 +11,58 @@ class Player(Model):
         database = db
         db_table = "players"
 
-    def __str__(self):
-        return self.name
+
+class Game(Model):
+    game_id = IntegerField(primary_key=True)
+    home_team_id = IntegerField()
+    away_team_id = IntegerField()
+    home_team_name = TextField()
+    away_team_name = TextField()
+    date = TextField()
+    matchup = TextField()
+
+    class Meta:
+        database = db
+        db_table = "game"
 
 
-# class BoxScoreRecord:
-#     def __init__(self, game_id, team_id, player_id, min, fgm, fga, fg3m, fg3a, ftm, fta, oreb, dreb, reb, ast, stl, blk, to, pts, pf, plus_minus):
-#         # self.game_id = game_id
-#         # self.team_id = team_id
-#         # self.player_id = player_id
-#         # self.min = min
-#         # self.fgm = fgm
-#         # self.fga = fga
-#         # self.fg3m = fg3m
-#         # self.fg3a = fg3a
-#         # self.ftm = ftm
-#         # self.fta = fta
-#         # self.oreb = oreb
-#         # self.dreb = dreb
-#         # self.reb = reb
-#         # self.ast = ast
-#         # self.stl = stl
-#         # self.blk = blk
-#         # self.to = to
-#         # self.pts = pts
-#         # self.pf = pf
-#         # self.plus_minus = plus_minus
-# #
-# class Game:
-#     def __init__(self, season_id, game_id, home_team_id, away_team_id, game):
+class BoxScoreRecord(Model):
+    team_id = IntegerField()
+    player_id = IntegerField()
+    min = TextField()
+    fgm = IntegerField()
+    fga = IntegerField()
+    fg3m = IntegerField()
+    fg3a = IntegerField()
+    ftm = IntegerField()
+    fta = IntegerField()
+    oreb = IntegerField()
+    dreb = IntegerField()
+    reb = IntegerField()
+    ast = IntegerField()
+    stl = IntegerField()
+    blk = IntegerField()
+    to = IntegerField()
+    pts = IntegerField()
+    pf = IntegerField()
+    plus_minus = IntegerField()
+
+    class Meta:
+        database = db
+        db_table = "boxscorerecord"
+
+
+class StockPrice(Model):
+    player_id = IntegerField()
+    date = TextField()
+    price = DecimalField()
+    method = TextField()
+
+    class Meta:
+        database = db
+        db_table = "stockprice"
+
+
+if __name__ == '__main__':
+    db.connect()
+    db.create_tables([Player, Game, BoxScoreRecord, StockPrice])
