@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
-
 from requests.sessions import Session
-import logging
+from hooply.market.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 DEFAULT_HEADERS = {
     "Host": "stats.nba.com",
@@ -15,16 +16,8 @@ DEFAULT_HEADERS = {
     "Referer": "https://stats.nba.com/",
 }
 
-DEFAULT_LOG_FORMAT = "%(asctime)s %(levelname) -7s " "%(name)s: %(message)s"
-DEFAULT_LOG_LEVEL = logging.DEBUG
-DEFAULT_LOG_FILE = 'app.log'
-
-logging.basicConfig(level=DEFAULT_LOG_LEVEL, format=DEFAULT_LOG_FORMAT)
-logger = logging.getLogger(__name__)
-
 
 class StatsQuery(ABC):
-
     def __init__(self, resource, params=None, headers=None):
         if params is None:
             params = dict()
@@ -53,14 +46,14 @@ class ActivePlayersQuery(StatsQuery):
             resp = s.get(self.url, params=self.params, headers=self.headers)
             data = resp.json()
             records = data.get("resultSets")[0]
-            columns, result_set = records.get('headers'), records.get('rowSet')
-            print(result_set)
+            columns, result_set = records.get("headers"), records.get("rowSet")
         except Exception as e:
             logger.error("Error case.")
             logger.error(e)
             exit(1)
         finally:
             logger.info("Request completed.")
+            return result_set, columns
 
 
 class BoxScoreTraditionalV2Query(StatsQuery):
@@ -76,7 +69,7 @@ class BoxScoreTraditionalV2Query(StatsQuery):
             resp = s.get(self.url, params=self.params, headers=self.headers)
             data = resp.json()
             records = data.get("resultSets")[0]
-            columns, result_set = records.get('headers'), records.get('rowSet')
+            columns, result_set = records.get("headers"), records.get("rowSet")
             print(result_set)
         except Exception as e:
             logger.error("Error case.")
@@ -99,7 +92,7 @@ class LeagueGameFinderQuery(StatsQuery):
             resp = s.get(self.url, params=self.params, headers=self.headers)
             data = resp.json()
             records = data.get("resultSets")[0]
-            columns, result_set = records.get('headers'), records.get('rowSet')
+            columns, result_set = records.get("headers"), records.get("rowSet")
             print(result_set[0])
         except Exception as e:
             logger.error("Error case.")
