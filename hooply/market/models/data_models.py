@@ -9,7 +9,7 @@ class Player(Model):
 
     class Meta:
         database = db
-        db_table = "players"
+        db_table = "player"
 
 
 class Game(Model):

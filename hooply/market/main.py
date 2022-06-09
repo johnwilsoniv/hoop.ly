@@ -20,15 +20,15 @@ def populate_active_players():
     }
     q = ActivePlayersQuery(params)
     result_set, columns = q.get()
-    
+
     active_players_df = pd.DataFrame(data=result_set, columns=columns)
     # Filtering for the fields we need for player objects
     active_players_df = active_players_df[['DISPLAY_FIRST_LAST', 'PERSON_ID', 'TEAM_ID']]
 
-    active_players = []
     for row in list(active_players_df.itertuples(index=False, name=None)):
-        active_players.append(Player(name=row[0], player_id=row[1], team_id=row[2]))
-    print(active_players)
+        player = Player(name=row[0], player_id=row[1], team_id=row[2])
+        logger.info("Creating player record: (%s)", player)
+        # player.save(force_insert=True)
 
 
 if __name__ == "__main__":
