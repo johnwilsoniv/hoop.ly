@@ -10,7 +10,7 @@ def setup_logger(name, level=DEFAULT_LOG_LEVEL):
     """
     """
     handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter(DEFAULT_LOG_FORMAT, DEF))
+    handler.setFormatter(logging.Formatter(DEFAULT_LOG_FORMAT, DEFAULT_DATE_FORMAT))
 
     logger = logging.getLogger(name)
     logger.setLevel(level)
