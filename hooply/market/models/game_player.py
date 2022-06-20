@@ -6,6 +6,7 @@ class GamePlayerBoxscore(Model):
     id = AutoField()
     # Replace with backref key
     player_id = IntegerField()
+    team = TextField()
     mp = DecimalField()
     fg = IntegerField()
     fga = IntegerField()

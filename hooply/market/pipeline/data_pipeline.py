@@ -20,25 +20,25 @@ logger = setup_logger(__name__)
 #             pass
 
 
-def load_date_boxscore(d: date) -> None:
-    year, month, day = d.isoformat().split("-")
-    params = {
-        "month": month,
-        "day": day,
-        "year": year
-    }
-    ds = DateScraper(resource=Resources.BOXSCORES.value, params=params)
-    game_links = ds.scrape()
-
-    if not game_links:
-        logger.info("No data ingested for date: (%s).", d)
-        return
-
-    for gl in game_links[0:1]:
-        s = GameScraper(path.join(Resources.BOXSCORES.value, gl))
-        game_information, team_boxscore, player_boxscore = s.scrape()
-        # _load_game()
-        sleep(DEFAULT_SLEEP_TIMEOUT)
+# def load_date_boxscore(d: date) -> None:
+#     year, month, day = d.isoformat().split("-")
+#     params = {
+#         "month": month,
+#         "day": day,
+#         "year": year
+#     }
+#     ds = DateScraper(resource=Resources.BOXSCORES.value, params=params)
+#     game_links = ds.scrape()
+#
+#     if not game_links:
+#         logger.info("No data ingested for date: (%s).", d)
+#         return
+#
+#     for gl in game_links[0:1]:
+#         s = GameScraper(path.join(Resources.BOXSCORES.value, gl))
+#         game_information, team_boxscore, player_boxscore = s.scrape()
+#         # _load_game()
+#         sleep(DEFAULT_SLEEP_TIMEOUT)
 
         # # load_player_boxscore(player_boxscore)
         # load_team_boxscore(team_boxscore)
@@ -57,16 +57,17 @@ def load_date_boxscore(d: date) -> None:
     # For each -> Date Scrape, if games -> generate all Game Scraper params -> Game Scrape -> save
 
 
-def load_teams() -> None:
-    pass
-
-
-def load_players() -> None:
-    pass
+# def load_teams() -> None:
+#     pass
+#
+#
+# def load_players() -> None:
+#     pass
 
 
 if __name__ == '__main__':
     # Load all player / team / season data specified {cmd (click)}
     # Queue daily daily game update {cmd (click)}
-    d = date(2022, 6, 16)
-    load_date_boxscore(d)
+    # d = date(2022, 6, 16)
+    # load_date_boxscore(d)
+    print("Hello world")

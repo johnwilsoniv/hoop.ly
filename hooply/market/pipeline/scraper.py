@@ -150,4 +150,10 @@ class GameScraper(Scraper):
 
                 logger.info("Box score record: (%s).", values)
                 res[team].append(values)
+
+            # Extract inactive players
+            bottom_nav = soup.find(id="bottom-nav")
+            previous = bottom_nav.previous_sibling
+            # Check inactive row tbd.
+
         return res
