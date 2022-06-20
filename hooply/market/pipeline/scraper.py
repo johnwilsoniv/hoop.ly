@@ -81,14 +81,27 @@ class DateScraper(Scraper):
 
 
 class GameScraper(Scraper):
-    def scrape(self):
+    def scrape(self) -> Tuple[List[List[str]], Dict[str, list], Dict[str, list]]:
         soup = self.request()
 
+        game_information = self._extract_game(soup)
         teams_four_factors = self._extract_four_factors(soup)
         teams = list(teams_four_factors.keys())
         player_box_scores = self._extract_player_factors(soup, teams)
 
-        return teams_four_factors, player_box_scores
+        return game_information, teams_four_factors, player_box_scores
+
+    def _extract_game(self, soup: bs4.BeautifulSoup) -> List[List[str]]:
+        logger.info("Extracting game information.")
+        res = []
+        scorebox = soup.find("div", class_="scorebox")
+        away_team_div, home_team_div, meta = list(scorebox.children)
+        for team_div in [home_team_div, away_team_div]:
+            team_info_block, score_div, record_div, _ = list(team_div.children)
+            team, score, record = team_info_block.find("strong").find("a").text, score_div.text, record_div.text
+            res.append([team, score, record])
+
+        return res
 
     def _extract_four_factors(self, soup: bs4.BeautifulSoup) -> Dict[str, List]:
         logger.info("Extracting team four factors.")
@@ -138,7 +151,3 @@ class GameScraper(Scraper):
                 logger.info("Box score record: (%s).", values)
                 res[team].append(values)
         return res
-
-
-if __name__ == "__main__":
-    print("Hello World")
