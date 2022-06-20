@@ -1,4 +1,4 @@
-from hooply.market.scrapers.scraper import Scraper, Resources, DEFAULT_REQUEST_HEADERS, DEFAULT_REQUEST_TIMEOUT
+from hooply.market.pipeline.scraper import Scraper, Resources, DEFAULT_REQUEST_HEADERS, DEFAULT_REQUEST_TIMEOUT
 from pytest import raises
 
 

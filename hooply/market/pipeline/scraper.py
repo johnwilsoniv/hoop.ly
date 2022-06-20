@@ -142,18 +142,3 @@ class GameScraper(Scraper):
 
 if __name__ == "__main__":
     print("Hello World")
-    # s = DateScraper(params={
-    #     "month": "10",
-    #     "day": "20",
-    #     "year": "2021"
-    # })
-    # gl = "202110200CHO.html"
-    # s = GameScraper(path.join(Resources.BOXSCORES.value, gl))
-    # s.scrape()
-    # p = {
-    #     "month": "10",
-    #     "day": "20",
-    #     "year": "2021"
-    # }
-    # ds = DateScraper(resource=Resources.BOXSCORES.value, params=p)
-    # ds.scrape()
