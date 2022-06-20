@@ -22,10 +22,6 @@ logger = setup_logger(__name__)
 
 
 class Scraper:
-    """
-
-    """
-
     def __init__(self, resource, params=None, headers=None, timeout=None):
         if params is None:
             params = dict()
@@ -43,13 +39,20 @@ class Scraper:
         raise NotImplementedError
 
     def request(self) -> BeautifulSoup:
-        """
-
-        """
         try:
-            logger.info("Requesting resource: (%s), (%s), (%s).", self.url, self.params, self.headers)
+            logger.info(
+                "Requesting resource: (%s), (%s), (%s).",
+                self.url,
+                self.params,
+                self.headers,
+            )
             s = Session()
-            resp = s.get(url=self.url, params=self.params, timeout=self.timeout, headers=self.headers)
+            resp = s.get(
+                url=self.url,
+                params=self.params,
+                timeout=self.timeout,
+                headers=self.headers,
+            )
         except RequestException as e:
             logger.error(e)
             exit(1)
@@ -59,14 +62,7 @@ class Scraper:
 
 
 class DateScraper(Scraper):
-    """
-
-    """
-
     def scrape(self):
-        """
-
-        """
         soup = self.request()
         res = []
 
@@ -85,13 +81,7 @@ class DateScraper(Scraper):
 
 
 class GameScraper(Scraper):
-    """
-
-    """
     def scrape(self):
-        """
-
-        """
         soup = self.request()
 
         teams_four_factors = self._extract_four_factors(soup)
@@ -100,30 +90,30 @@ class GameScraper(Scraper):
 
         return teams_four_factors, player_box_scores
 
-
-    def _extract_four_factors(self, soup: bs4.BeautifulSoup) -> Dict[str, Tuple]:
-        """
-
-        """
+    def _extract_four_factors(self, soup: bs4.BeautifulSoup) -> Dict[str, List]:
+        logger.info("Extracting team four factors.")
         res = {}
         four_factors = soup.find("div", id="all_four_factors")
         _, _, four_factors_comment = list(four_factors.children)
 
-        four_factors_table = BeautifulSoup(four_factors_comment, 'html.parser')
+        four_factors_table = BeautifulSoup(four_factors_comment, "html.parser")
 
         for row in four_factors_table.find("tbody").children:
             four_factors_html = list(row.children)
-            team, pace, efg, ortg = four_factors_html[0].text, four_factors_html[1].text, four_factors_html[2].text, \
-                                    four_factors_html[6].text
-            res[team] = (pace, efg, ortg)
+            values = [
+                four_factors_html[0].text,
+                four_factors_html[1].text,
+                four_factors_html[2].text,
+                four_factors_html[6].text,
+            ]
+            logger.info("Team four factors: (%s).", values)
+            res[values[0]] = values[1:]
 
         return res
 
     def _extract_player_factors(self, soup: bs4.BeautifulSoup, teams: List[str]) -> Dict[str, List]:
-        """
-
-        """
         res = {}
+        logger.info("Extracting player box score records.")
         for team in teams:
             res[team] = []
             table_id = "box-{0}-game-basic".format(team)
@@ -132,24 +122,25 @@ class GameScraper(Scraper):
             for row in box_score_rows:
                 # Skip separator
                 if row.attrs.get("class", None) == ["thead"]:
-                    logger.info("Skipping player ingestion since thead was found.")
+                    logger.info("Skipping player ingestion since 'thead' was found.")
                     continue
                 bs_tags = list(row.children)
-                #DNP / Injury Case
+                # DNP / Injury Case
                 if bs_tags[1].get("data-stat") == "reason":
                     values = [bs_tags[0].text]
-                    res[team].append(values)
                 else:
                     values = []
                     for tag in bs_tags:
                         # Extract all box score values minus percentages
                         if "pct" not in tag.get("data-stat"):
                             values.append(tag.text)
-                    res[team].append(values)
+
+                logger.info("Box score record: (%s).", values)
+                res[team].append(values)
         return res
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Hello World")
     # s = DateScraper(params={
     #     "month": "10",
