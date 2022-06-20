@@ -10,7 +10,7 @@ class GamePlayerBoxscore(Model):
     fg = IntegerField()
     fga = IntegerField()
     tpg = IntegerField()
-    tpga = IntegerField()
+    tpa = IntegerField()
     ft = IntegerField()
     fta = IntegerField()
     orb = IntegerField()
