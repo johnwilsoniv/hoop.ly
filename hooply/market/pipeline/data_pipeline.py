@@ -1,11 +1,4 @@
-from hooply.market.pipeline.scraper import GameScraper, DateScraper, Resources
-from hooply.market.models.game_team import GameTeamBoxscore
-from hooply.market.models.game_player import GamePlayerBoxscore
-from hooply.market.logger import setup_logger
-from hooply.market import db
-from datetime import date
-from time import sleep
-from os import path
+from hooply.logger import setup_logger
 
 DEFAULT_SLEEP_TIMEOUT = 5
 logger = setup_logger(__name__)
