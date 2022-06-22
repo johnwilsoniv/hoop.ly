@@ -3,6 +3,7 @@ from enum import Enum
 DEFAULT_REQUEST_HEADERS = {}
 DEFAULT_REQUEST_TIMEOUT = 1
 DEFAULT_HOST = "https://www.basketball-reference.com"
+DEFAULT_QUEUE_NAME = "daily-ingestion-queue"
 
 
 class Resources(Enum):
