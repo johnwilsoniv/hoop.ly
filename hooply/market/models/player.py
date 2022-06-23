@@ -10,5 +10,5 @@ class Player(BaseModel):
     height = TextField()
     weight = TextField()
 
-    def __repr__(self):
+    def __str__(self):
         return '<{0}: {1}>'.format(self.__class__, self.name)

@@ -1,7 +1,7 @@
 from redis import Redis
 from rq import Queue, Worker
 from pandas import date_range
-from hooply.market.pipeline import DEFAULT_QUEUE_NAME, DEV_SEASON_START, DEV_SEASON_END, TEAM_ABBREVIATIONS, DEFAULT_SEASON
+from hooply.market.pipeline import DEFAULT_QUEUE_NAME, DEV_SEASON_START, DEV_SEASON_END, DEV_SEASON, DEV_TEAM_ABBREVIATIONS
 from hooply.market.scrapers.team_scraper import TeamRosterScraper
 from hooply.market.scrapers.scraper import ScrapeResultType, ScrapeResult
 from hooply.market.pipeline.ingestion import DataLoader
@@ -23,8 +23,8 @@ def init_pipeline(db):
     # queue = []
 
     # Load initial players/teams
-    for team in TEAM_ABBREVIATIONS:
-        resource = TeamRosterScraper.generate_resource(team, DEFAULT_SEASON)
+    for team in DEV_TEAM_ABBREVIATIONS:
+        resource = TeamRosterScraper.generate_resource(team, DEV_SEASON)
         t = TeamRosterScraper(resource)
         sr = t.scrape()
         DataLoader.load_team_roster(sr, db)
