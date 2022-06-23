@@ -1,5 +1,8 @@
+from peewee import Database, DatabaseError
 from hooply.logger import setup_logger
-from hooply.market.scrapers.scraper import ScrapeResult, Resources
+from hooply.market.scrapers.scraper import ScrapeResult, ScrapeResultType
+from hooply.market.models.player import Player
+from hooply.market.models.meta_ingestion import MetaIngestion
 
 DEFAULT_SLEEP_TIMEOUT = 5
 logger = setup_logger(__name__)
@@ -18,8 +21,29 @@ class DataLoader:
         raise NotImplementedError
 
     @staticmethod
-    def load_team_roster(s: ScrapeResult) -> None:
-        raise NotImplementedError
+    def load_team_roster(s: ScrapeResult, db: Database) -> None:
+        if s.resource != ScrapeResultType.player:
+            logger.error("Replace.")
+            exit(1)
+
+        with db.atomic() as txn:
+            try:
+                logger.info("Beginning transaction.")
+                for player in s.data:
+                    name, _, position, height, weight = player
+                    p = Player.create(name=name, position=position, height=height, weight=weight)
+                    logger.info("Created player (%s)", p)
+                txn.commit()
+            except DatabaseError:
+                txn.rollback()
+
+        # with db.atomic() as txn:
+        #     try:
+        #         logger.info("Beginning transaction.")
+        #         m = MetaIngestion(type="player")
+        #         txn.commit()
+        #     except DatabaseError:
+        #         txn.rollback()
 
     @staticmethod
     def _load_bipm(s: ScrapeResult) -> None:
@@ -80,11 +104,3 @@ class DataLoader:
 #
 # def load_players() -> None:
 #     pass
-
-
-if __name__ == '__main__':
-    # Load all player / team / season data specified {cmd (click)}
-    # Queue daily daily game update {cmd (click)}
-    # d = date(2022, 6, 16)
-    # load_date_boxscore(d)
-    print("Hello world")
