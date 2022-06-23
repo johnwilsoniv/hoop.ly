@@ -1,5 +1,5 @@
 from hooply.logger import setup_logger
-from hooply.market.scrapers.scraper import ScrapeResult
+from hooply.market.scrapers.scraper import ScrapeResult, Resources
 
 DEFAULT_SLEEP_TIMEOUT = 5
 logger = setup_logger(__name__)
@@ -15,7 +15,15 @@ class DataLoader:
 
     @staticmethod
     def load_game(s: ScrapeResult) -> None:
-        pass
+        raise NotImplementedError
+
+    @staticmethod
+    def load_team_roster(s: ScrapeResult) -> None:
+        raise NotImplementedError
+
+    @staticmethod
+    def _load_bipm(s: ScrapeResult) -> None:
+        raise NotImplementedError
 
 
 

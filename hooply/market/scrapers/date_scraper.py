@@ -20,4 +20,8 @@ class DateScraper(Scraper):
                 link = boxscore_anchor.get("href").split("/")[-1]
                 logger.info("Game link found: (%s)", link)
                 data.append(link)
-        return ScrapeResult(resource=ScrapeType.games_today, data=data)
+        return ScrapeResult(resource=ScrapeResultType.games_today, data=data)
+
+    @staticmethod
+    def generate_params(date: str):
+        raise NotImplementedError

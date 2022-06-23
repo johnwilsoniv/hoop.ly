@@ -4,7 +4,7 @@ from peewee import TextField
 
 class Player(BaseModel):
     name = TextField()
-    slug = TextField()
+    # slug = TextField()
     position = TextField()
     height = TextField()
     weight = TextField()
