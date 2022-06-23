@@ -1,7 +1,23 @@
 from hooply.logger import setup_logger
+from hooply.market.scrapers.scraper import ScrapeResult
 
 DEFAULT_SLEEP_TIMEOUT = 5
 logger = setup_logger(__name__)
+
+
+# def load_players():
+#     pass
+#
+# def ingest_player_data():
+#     pass
+
+class DataLoader:
+
+    @staticmethod
+    def load_game(s: ScrapeResult) -> None:
+        pass
+
+
 
 
 # def _load_game():

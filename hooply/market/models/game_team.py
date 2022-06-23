@@ -1,8 +1,8 @@
-from peewee import *
-from hooply.market import db
+from hooply.market.models.base import BaseModel
+from peewee import AutoField, TextField, IntegerField, DecimalField
 
 
-class GameTeamBoxscore(Model):
+class GameTeamBoxscore(BaseModel):
     id = AutoField()
     # Replace with backref key
     game_id = IntegerField()
@@ -11,6 +11,3 @@ class GameTeamBoxscore(Model):
     efg = DecimalField()
     ortg = DecimalField()
 
-    class Meta:
-        database = db
-        table_name = "game_team_boxscore"

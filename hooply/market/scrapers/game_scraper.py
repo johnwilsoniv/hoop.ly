@@ -1,35 +1,7 @@
-from typing import List, Tuple, Dict
-
-import bs4.element
-from bs4 import BeautifulSoup
 from hooply.logger import setup_logger
-from requests import Session
-from requests.exceptions import RequestException
-from enum import Enum
-from os import path
+from hooply.market.scrapers.scraper import Scraper, ScrapeResult, ScrapeType
 
 logger = setup_logger(__name__)
-
-
-class DateScraper(Scraper):
-    def scrape(self):
-        soup = self.request()
-        res = []
-
-        games = soup.find_all("div", class_="game_summary")
-        logger.info("(%s) games were found.", len(games))
-
-        if games:
-            games = soup.find_all("div", class_="game_summary")
-            for game in games:
-                game_links = game.find("p", class_="links")
-                boxscore_anchor, _, _, _, _ = list(game_links.children)
-                link = boxscore_anchor.get("href").split("/")[-1]
-                logger.info("Game link found: (%s)", link)
-                res.append(link)
-        return res
-
-
 
 # class GameScraper(Scraper):
 #     def scrape(self) -> Tuple[List[List[str]], Dict[str, list], Dict[str, list]]:

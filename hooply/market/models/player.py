@@ -1,14 +1,10 @@
-from peewee import *
-from hooply.market import db
+from hooply.market.models.base import BaseModel
+from peewee import TextField
 
 
-class Player(Model):
+class Player(BaseModel):
     name = TextField()
     slug = TextField()
     position = TextField()
     height = TextField()
     weight = TextField()
-
-    class Meta:
-        database = db
-        table_name = "player"

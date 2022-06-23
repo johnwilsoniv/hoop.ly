@@ -1,6 +1,7 @@
-from typing import List, Protocol
+from typing import List
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
+from enum import Enum, auto
 from requests import Session
 from requests.exceptions import RequestException
 from hooply.logger import setup_logger
@@ -10,13 +11,26 @@ from os import path
 logger = setup_logger(__name__)
 
 
+class Resources(Enum):
+    BOXSCORES = "boxscores"
+    PLAYERS = "players"
+    TEAMS = "teams"
+
+
+class ScrapeResultType(Enum):
+    games_today = auto()
+    player = auto()
+    teams_boxscore = auto()
+    player_boxscore = auto()
+
+
 @dataclass
 class ScrapeResult:
-    resource: str
+    resource: ScrapeResultType
     data: List[List[str]]
 
 
-class Scraper(Protocol):
+class Scraper:
     def __init__(self, resource, params=None, headers=None, timeout=None):
         if params is None:
             params = dict()
@@ -31,7 +45,7 @@ class Scraper(Protocol):
         self.timeout = timeout
 
     def scrape(self) -> ScrapeResult:
-        ...
+        raise NotImplementedError
 
     def request(self) -> BeautifulSoup:
         try:
