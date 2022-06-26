@@ -8,8 +8,8 @@ DEFAULT_HOST = "https://www.basketball-reference.com"
 DEFAULT_QUEUE_NAME = "daily-ingestion-queue"
 
 DEV_SEASON = "2022"
-DEV_SEASON_START = "2021-06-15"
-DEV_SEASON_END = "2022-06-15"
+DEV_SEASON_START = "2022-06-16"
+DEV_SEASON_END = "2022-06-16"
 
 DEV_TEAM_ABBREVIATIONS = [
     "BOS",

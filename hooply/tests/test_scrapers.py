@@ -1,9 +1,9 @@
-from hooply.market.scrapers.scraper import Scraper, Resources, DEFAULT_REQUEST_HEADERS, DEFAULT_REQUEST_TIMEOUT
+from hooply.market.scrapers.scraper import Scraper, RequestResources, DEFAULT_REQUEST_HEADERS, DEFAULT_REQUEST_TIMEOUT
 from pytest import raises
 
 
 def test_scraper_initialization():
-    s = Scraper(Resources.BOXSCORES.value)
+    s = Scraper(RequestResources.BOXSCORES.value)
 
     assert s.params == {}
     assert s.headers == DEFAULT_REQUEST_HEADERS
@@ -11,7 +11,7 @@ def test_scraper_initialization():
 
 
 def test_scraper_scrape_not_implemented():
-    s = Scraper(Resources.BOXSCORES.value)
+    s = Scraper(RequestResources.BOXSCORES.value)
 
     with raises(NotImplementedError):
         s.scrape()

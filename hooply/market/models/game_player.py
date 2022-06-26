@@ -5,7 +5,8 @@ from peewee import AutoField, TextField, DecimalField, IntegerField
 class GamePlayerBoxscore(BaseModel):
     id = AutoField()
     # Replace with backref key
-    player_id = IntegerField()
+    # player_id = IntegerField()
+    player = TextField()
     team = TextField()
     mp = DecimalField()
     fg = IntegerField()

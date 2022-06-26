@@ -1,11 +1,13 @@
+from typing import List
+
 from hooply.logger import setup_logger
-from hooply.market.scrapers.scraper import Scraper, ScrapeResult, ScrapeResultType, Resources
+from hooply.market.scrapers.scraper import Scraper, ScrapeResult, ScrapeResultType, RequestResources
 
 logger = setup_logger(__name__)
 
 
 class TeamRosterScraper(Scraper):
-    def scrape(self) -> ScrapeResult:
+    def scrape(self) -> List[ScrapeResult]:
         soup = self.request()
         data = []
 
@@ -27,8 +29,8 @@ class TeamRosterScraper(Scraper):
 
             data.append((player, number, position, height, weight))
 
-        return ScrapeResult(ScrapeResultType.player, data)
+        return [ScrapeResult(ScrapeResultType.player, data)]
 
     @staticmethod
     def generate_resource(team: str, season: str):
-        return f'{Resources.TEAMS.value}/{team}/{season}.html'
+        return f'{RequestResources.TEAMS.value}/{team}/{season}.html'

@@ -11,22 +11,23 @@ from os import path
 logger = setup_logger(__name__)
 
 
-class Resources(Enum):
+class RequestResources(Enum):
     BOXSCORES = "boxscores"
     PLAYERS = "players"
     TEAMS = "teams"
 
 
 class ScrapeResultType(Enum):
-    games_today = auto()
+    multiple_games_link = auto()
     player = auto()
+    game = auto()
     teams_boxscore = auto()
-    player_boxscore = auto()
+    players_boxscore = auto()
 
 
 @dataclass
 class ScrapeResult:
-    resource: ScrapeResultType
+    result_type: ScrapeResultType
     data: List[List[str]]
 
 
@@ -44,7 +45,7 @@ class Scraper:
         self.headers = headers
         self.timeout = timeout
 
-    def scrape(self) -> ScrapeResult:
+    def scrape(self) -> List[ScrapeResult]:
         raise NotImplementedError
 
     def request(self) -> BeautifulSoup:
