@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Type
 from dataclasses import dataclass
 from bs4 import BeautifulSoup
 from enum import Enum, auto
@@ -28,7 +28,8 @@ class ScrapeResultType(Enum):
 @dataclass
 class ScrapeResult:
     result_type: ScrapeResultType
-    data: List[List[str]]
+    data: List[Type]
+
 
 
 class Scraper:
