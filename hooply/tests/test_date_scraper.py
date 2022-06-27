@@ -2,7 +2,7 @@ from typing import List, Dict, Tuple
 from hooply.market.scrapers.scraper import RequestResources, ScrapeResult, ScrapeResultType
 from hooply.market.scrapers.date_scraper import DateScraper, Scraper
 from pandas import Timestamp
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
 
 TEST_DATE = ["2022", "7", "1"]
 
@@ -27,7 +27,7 @@ def test_date_scraper_generate():
 
 
 @patch.object(DateScraper, 'request')
-def test_date_scraper_scrape_no_games_found(patched_request):
+def test_date_scraper_scrape_no_games_found(patched_request: MagicMock):
     mock_soup = Mock(name="soup")
     patched_request.return_value = mock_soup
 
@@ -41,7 +41,7 @@ def test_date_scraper_scrape_no_games_found(patched_request):
 
 @patch.object(DateScraper, '_extract_game')
 @patch.object(DateScraper, 'request')
-def test_date_scraper_scrape_multiple_games_found(patched_request, patched_extract_game):
+def test_date_scraper_scrape_multiple_games_found(patched_request: MagicMock, patched_extract_game: MagicMock):
     mock_soup = Mock(name="soup")
     mock_games = [Mock(), Mock()]
     mock_soup.find_all.return_value = mock_games
