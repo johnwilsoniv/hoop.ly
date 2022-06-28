@@ -9,6 +9,7 @@ from hooply.market.models.meta_ingestion import MetaIngestion
 DEFAULT_SLEEP_TIMEOUT = 5
 logger = setup_logger(__name__)
 
+
 class DataLoader:
 
     @staticmethod

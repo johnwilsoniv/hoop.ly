@@ -9,7 +9,6 @@ logger = setup_logger(__name__)
 
 class DateScraper(Scraper):
 
-
     def _extract_game(self, game) -> str:
         game_links = game.find("p", class_="links")
         boxscore_anchor, _, _, _, _ = list(game_links.children)

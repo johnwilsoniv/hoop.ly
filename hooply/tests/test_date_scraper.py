@@ -1,6 +1,6 @@
 from typing import List, Dict, Tuple
 from hooply.market.scrapers.scraper import RequestResources, ScrapeResult, ScrapeResultType
-from hooply.market.scrapers.date_scraper import DateScraper, Scraper
+from hooply.market.scrapers.date_scraper import DateScraper
 from pandas import Timestamp
 from unittest.mock import Mock, patch, MagicMock
 
@@ -53,8 +53,7 @@ def test_date_scraper_scrape_multiple_games_found(patched_request: MagicMock, pa
     test_ds = DateScraper(resource=resource, params=params)
 
     expected = ScrapeResult(result_type=ScrapeResultType.multiple_games_link, data=game_links)
-    res = test_ds.scrape()[0]
 
-    assert res.data == expected.data and res.result_type == expected.result_type
+    assert test_ds.scrape() == [expected]
 
 

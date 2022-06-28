@@ -6,7 +6,7 @@ from hooply.market.scrapers.team_scraper import TeamRosterScraper
 from hooply.market.scrapers.game_scraper import GameScraper
 from hooply.market.scrapers.date_scraper import DateScraper
 from hooply.market.scrapers.scraper import ScrapeResultType, ScrapeResult
-from hooply.market.pipeline.ingestion import DataLoader
+from hooply.market.pipeline.data_loader import DataLoader
 from hooply.logger import setup_logger
 
 logger = setup_logger(__name__)
