@@ -8,11 +8,34 @@ from hooply.market.scrapers.date_scraper import DateScraper
 from hooply.market.scrapers.scraper import ScrapeResultType, ScrapeResult
 from hooply.market.pipeline.data_loader import DataLoader
 from hooply.logger import setup_logger
+from peewee import Database
 
 logger = setup_logger(__name__)
 
 
-def init_pipeline(db):
+def ingest_team(team: str, season:str, db: Database) -> None:
+    resource = TeamRosterScraper.generate_resource(team, season)
+    t = TeamRosterScraper(resource)
+    sr, = t.scrape()
+    DataLoader.load_team_roster(sr, db)
+
+
+def ingest_games_in_range(start_date: str, end_date:str, db: Database) -> None:
+    preload_dates = date_range(start_date, end_date, freq='d').tolist()
+    for date in preload_dates:
+        resource = DateScraper.generate_resource()
+        params = DateScraper.generate_params(date)
+        d = DateScraper(resource=resource, params=params)
+        [sr] = d.scrape()
+
+        for game_link in sr.data:
+            resource = GameScraper.generate_resource(game_link)
+            g = GameScraper(resource=resource)
+            _, team_bs_info_sr, player_bs_info_sr = g.scrape()
+            DataLoader.load_game(team_bs_info_sr, player_bs_info_sr, db)
+
+
+def init_pipeline(db: Database) -> None:
     logger.info("Initializing data pipeline.")
     # preload teams / players
     # Initialize redis queue (if fresh is specified)
@@ -26,22 +49,9 @@ def init_pipeline(db):
 
     # Load initial players/teams
     for team in DEV_TEAM_ABBREVIATIONS:
-        resource = TeamRosterScraper.generate_resource(team, DEV_SEASON)
-        t = TeamRosterScraper(resource)
-        sr, = t.scrape()
-        DataLoader.load_team_roster(sr, db)
+        ingest_team(team, DEV_SEASON, db)
 
-    preload_dates = date_range(DEV_SEASON_START, DEV_SEASON_END, freq='d').tolist()
-    for date in preload_dates:
-        resource = DateScraper.generate_resource()
-        params = DateScraper.generate_params(date)
-        d = DateScraper(resource=resource, params=params)
-        [sr] = d.scrape()
+    ingest_games_in_range(DEV_SEASON_START, DEV_SEASON_END, db)
 
-        for game_link in sr.data:
-            resource = GameScraper.generate_resource(game_link)
-            g = GameScraper(resource=resource)
-            _, team_bs_info_sr, player_bs_info_sr = g.scrape()
-            DataLoader.load_game(team_bs_info_sr, player_bs_info_sr, db)
 
 
