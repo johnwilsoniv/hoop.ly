@@ -11,4 +11,4 @@ class Player(BaseModel):
     weight = TextField()
 
     def __str__(self):
-        return '<{0}: {1}>'.format(self.__class__, self.name)
+        return "<{0}: {1}>".format(self.__class__, self.name)

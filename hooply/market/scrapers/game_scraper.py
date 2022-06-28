@@ -2,7 +2,12 @@ from typing import List, Dict
 
 from bs4 import BeautifulSoup
 from hooply.logger import setup_logger
-from hooply.market.scrapers.scraper import Scraper, ScrapeResult, ScrapeResultType, RequestResources
+from hooply.market.scrapers.scraper import (
+    Scraper,
+    ScrapeResult,
+    ScrapeResultType,
+    RequestResources,
+)
 
 logger = setup_logger(__name__)
 PLAYER_BOX_SCORE_SIZE = 18
@@ -18,8 +23,12 @@ class GameScraper(Scraper):
         player_box_scores = self._extract_player_factors(soup, teams)
 
         sr_game_info = ScrapeResult(ScrapeResultType.game, game_information)
-        sr_team_bs_info = ScrapeResult(ScrapeResultType.teams_boxscore, teams_four_factors)
-        sr_player_bs_info = ScrapeResult(ScrapeResultType.players_boxscore, player_box_scores)
+        sr_team_bs_info = ScrapeResult(
+            ScrapeResultType.teams_boxscore, teams_four_factors
+        )
+        sr_player_bs_info = ScrapeResult(
+            ScrapeResultType.players_boxscore, player_box_scores
+        )
 
         return [sr_game_info, sr_team_bs_info, sr_player_bs_info]
 
@@ -30,7 +39,11 @@ class GameScraper(Scraper):
         away_team_div, home_team_div, meta = list(scorebox.children)
         for team_div in [home_team_div, away_team_div]:
             team_info_block, score_div, record_div, _ = list(team_div.children)
-            team, score, record = team_info_block.find("strong").find("a").text, score_div.text, record_div.text
+            team, score, record = (
+                team_info_block.find("strong").find("a").text,
+                score_div.text,
+                record_div.text,
+            )
             res.append([team, score, record])
 
         return res
@@ -45,13 +58,20 @@ class GameScraper(Scraper):
 
         for row in four_factors_table.find("tbody").children:
             four_factors_html = list(row.children)
-            team, pace, efg, ortg = four_factors_html[0].text, four_factors_html[1].text, four_factors_html[2].text, four_factors_html[6].text,
+            team, pace, efg, ortg = (
+                four_factors_html[0].text,
+                four_factors_html[1].text,
+                four_factors_html[2].text,
+                four_factors_html[6].text,
+            )
             logger.info("Team four factors: (%s).", [team, pace, efg, ortg])
             res[team] = [pace, efg, ortg]
 
         return res
 
-    def _extract_player_factors(self, soup: BeautifulSoup, teams: List[str]) -> Dict[str, list]:
+    def _extract_player_factors(
+        self, soup: BeautifulSoup, teams: List[str]
+    ) -> Dict[str, list]:
         res = {}
         logger.info("Extracting player box score records.")
         for team in teams:
@@ -76,7 +96,7 @@ class GameScraper(Scraper):
                             values.append(tag.text)
 
                 # Add filler values for players who didnt play
-                values += ['0'] * (PLAYER_BOX_SCORE_SIZE - len(values))
+                values += ["0"] * (PLAYER_BOX_SCORE_SIZE - len(values))
                 logger.info("Box score record: (%s).", values)
                 res[team].append(values)
 
@@ -85,4 +105,4 @@ class GameScraper(Scraper):
 
     @staticmethod
     def generate_resource(game_link: str):
-        return f'{RequestResources.BOXSCORES.value}/{game_link}'
+        return f"{RequestResources.BOXSCORES.value}/{game_link}"

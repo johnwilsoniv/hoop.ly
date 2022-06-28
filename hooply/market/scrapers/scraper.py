@@ -5,7 +5,11 @@ from enum import Enum, auto
 from requests import Session
 from requests.exceptions import RequestException
 from hooply.logger import setup_logger
-from hooply.market.pipeline import DEFAULT_HOST, DEFAULT_REQUEST_HEADERS, DEFAULT_REQUEST_TIMEOUT
+from hooply.market.pipeline import (
+    DEFAULT_HOST,
+    DEFAULT_REQUEST_HEADERS,
+    DEFAULT_REQUEST_TIMEOUT,
+)
 from os import path
 
 logger = setup_logger(__name__)
@@ -29,7 +33,6 @@ class ScrapeResultType(Enum):
 class ScrapeResult:
     result_type: ScrapeResultType
     data: List[Type]
-
 
 
 class Scraper:

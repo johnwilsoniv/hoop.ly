@@ -1,4 +1,9 @@
-from hooply.market.scrapers.scraper import Scraper, RequestResources, DEFAULT_REQUEST_HEADERS, DEFAULT_REQUEST_TIMEOUT
+from hooply.market.scrapers.scraper import (
+    Scraper,
+    RequestResources,
+    DEFAULT_REQUEST_HEADERS,
+    DEFAULT_REQUEST_TIMEOUT,
+)
 from requests import Session
 from pytest import raises
 from requests import Response, RequestException
@@ -35,4 +40,3 @@ def test_scraper_request_successful(patched_get):
 
     patched_get.return_value = Response()
     s.request()
-

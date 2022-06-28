@@ -1,15 +1,29 @@
 from typing import List, Tuple, Type
 
 from hooply.logger import setup_logger
-from hooply.market.scrapers.scraper import Scraper, ScrapeResult, ScrapeResultType, RequestResources
+from hooply.market.scrapers.scraper import (
+    Scraper,
+    ScrapeResult,
+    ScrapeResultType,
+    RequestResources,
+)
 
 logger = setup_logger(__name__)
 
 
 class TeamRosterScraper(Scraper):
-
     def _extract_player(self, player_row: List[Type]) -> List[str]:
-        number_div, player_div, position_div, height_div, weight_div, _, _, _, _ = player_row
+        (
+            number_div,
+            player_div,
+            position_div,
+            height_div,
+            weight_div,
+            _,
+            _,
+            _,
+            _,
+        ) = player_row
 
         # Extract player information from team
         player = player_div.find("a").text.strip()
@@ -38,4 +52,4 @@ class TeamRosterScraper(Scraper):
 
     @staticmethod
     def generate_resource(team: str, season: str):
-        return f'{RequestResources.TEAMS.value}/{team}/{season}.html'
+        return f"{RequestResources.TEAMS.value}/{team}/{season}.html"

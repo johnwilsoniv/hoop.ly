@@ -10,4 +10,3 @@ class GameTeamBoxscore(BaseModel):
     pace = DecimalField()
     efg = DecimalField()
     ortg = DecimalField()
-
