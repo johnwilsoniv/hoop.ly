@@ -8,7 +8,7 @@ class GamePlayerBoxscore(BaseModel):
     # player_id = IntegerField()
     player = TextField()
     team = TextField()
-    mp = DecimalField()
+    mp = TextField()
     fg = IntegerField()
     fga = IntegerField()
     tpg = IntegerField()

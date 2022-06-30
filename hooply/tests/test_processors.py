@@ -1,4 +1,4 @@
-from hooply.market.processor import BIPMProcessor, Processor
+from hooply.market.processors.processor import BIPMProcessor, Processor
 
 
 def test_bipm_processor_subclass():

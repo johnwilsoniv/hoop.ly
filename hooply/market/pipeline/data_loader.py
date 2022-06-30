@@ -55,10 +55,11 @@ class DataLoader:
                             pts,
                             pm,
                         ) = player_bs
+
                         pbs = GamePlayerBoxscore.create(
                             player=name,
                             team=team,
-                            mp=min,
+                            mp=mp,
                             fg=fg,
                             fga=fga,
                             tpg=tpg,
