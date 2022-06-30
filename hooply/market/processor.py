@@ -1,4 +1,5 @@
-from typing import List, Protocol, runtime_checkable, Type
+from typing import List, Protocol, Type, runtime_checkable
+
 from hooply.market.models.game_player import GamePlayerBoxscore
 from hooply.market.models.game_team import GameTeamBoxscore
 

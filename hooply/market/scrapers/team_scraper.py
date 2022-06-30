@@ -2,10 +2,10 @@ from typing import List, Tuple, Type
 
 from hooply.logger import setup_logger
 from hooply.market.scrapers.scraper import (
+    RequestResources,
     Scraper,
     ScrapeResult,
     ScrapeResultType,
-    RequestResources,
 )
 
 logger = setup_logger(__name__)

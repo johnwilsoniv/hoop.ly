@@ -1,12 +1,13 @@
-from typing import List, Dict
+from typing import Dict, List
 
 from bs4 import BeautifulSoup
+
 from hooply.logger import setup_logger
 from hooply.market.scrapers.scraper import (
+    RequestResources,
     Scraper,
     ScrapeResult,
     ScrapeResultType,
-    RequestResources,
 )
 
 logger = setup_logger(__name__)
@@ -82,7 +83,9 @@ class GameScraper(Scraper):
             for row in box_score_rows:
                 # Skip separator
                 if row.attrs.get("class", None) == ["thead"]:
-                    logger.info("Skipping player ingestion since 'thead' was found.")
+                    logger.info(
+                        "Skipping player ingestion since 'thead' was found."
+                    )
                     continue
                 bs_tags = list(row.children)
                 # DNP / Injury Case

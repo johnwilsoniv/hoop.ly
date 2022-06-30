@@ -1,12 +1,14 @@
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
+from unittest.mock import MagicMock, Mock, patch
+
+from pandas import Timestamp
+
+from hooply.market.scrapers.date_scraper import DateScraper
 from hooply.market.scrapers.scraper import (
     RequestResources,
     ScrapeResult,
     ScrapeResultType,
 )
-from hooply.market.scrapers.date_scraper import DateScraper
-from pandas import Timestamp
-from unittest.mock import Mock, patch, MagicMock
 
 TEST_DATE = ["2022", "7", "1"]
 
@@ -22,7 +24,11 @@ def setup_date_scraper_reqs(test_date: List[str]) -> Tuple[str, Dict]:
 def test_date_scraper_generate():
     resource, params = setup_date_scraper_reqs(TEST_DATE)
 
-    assert params == {"month": TEST_DATE[1], "day": TEST_DATE[2], "year": TEST_DATE[0]}
+    assert params == {
+        "month": TEST_DATE[1],
+        "day": TEST_DATE[2],
+        "year": TEST_DATE[0],
+    }
     assert resource == RequestResources.BOXSCORES.value
 
 
