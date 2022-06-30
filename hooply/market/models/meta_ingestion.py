@@ -1,6 +1,8 @@
 import datetime
-from hooply.market.models.base import BaseModel
+
 from peewee import AutoField, TextField, TimestampField
+
+from hooply.market.models.base import BaseModel
 
 
 class MetaIngestion(BaseModel):

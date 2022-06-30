@@ -1,10 +1,11 @@
 from peewee import Database, DatabaseError
+
 from hooply.logger import setup_logger
-from hooply.market.scrapers.scraper import ScrapeResult, ScrapeResultType
-from hooply.market.models.player import Player
 from hooply.market.models.game_player import GamePlayerBoxscore
 from hooply.market.models.game_team import GameTeamBoxscore
 from hooply.market.models.meta_ingestion import MetaIngestion
+from hooply.market.models.player import Player
+from hooply.market.scrapers.scraper import ScrapeResult, ScrapeResultType
 
 DEFAULT_SLEEP_TIMEOUT = 5
 logger = setup_logger(__name__)
@@ -12,7 +13,9 @@ logger = setup_logger(__name__)
 
 class DataLoader:
     @staticmethod
-    def load_game(team_sr: ScrapeResult, player_sr: ScrapeResult, db: Database) -> None:
+    def load_game(
+        team_sr: ScrapeResult, player_sr: ScrapeResult, db: Database
+    ) -> None:
         if (
             team_sr.result_type != ScrapeResultType.teams_boxscore
             or player_sr.result_type != ScrapeResultType.players_boxscore
@@ -99,7 +102,10 @@ class DataLoader:
                 for player in s.data:
                     name, _, position, height, weight = player
                     p = Player.create(
-                        name=name, position=position, height=height, weight=weight
+                        name=name,
+                        position=position,
+                        height=height,
+                        weight=weight,
                     )
                     logger.info("Created player (%s)", p)
                 txn.commit()

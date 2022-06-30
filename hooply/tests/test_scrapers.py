@@ -1,13 +1,14 @@
+from unittest.mock import Mock, patch
+
+from pytest import raises
+from requests import RequestException, Response, Session
+
 from hooply.market.scrapers.scraper import (
-    Scraper,
-    RequestResources,
     DEFAULT_REQUEST_HEADERS,
     DEFAULT_REQUEST_TIMEOUT,
+    RequestResources,
+    Scraper,
 )
-from requests import Session
-from pytest import raises
-from requests import Response, RequestException
-from unittest.mock import Mock, patch
 
 
 def test_scraper_initialization():

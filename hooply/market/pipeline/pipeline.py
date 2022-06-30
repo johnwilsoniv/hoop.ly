@@ -1,20 +1,21 @@
+from pandas import date_range
+from peewee import Database
 from redis import Redis
 from rq import Queue, Worker
-from pandas import date_range
+
+from hooply.logger import setup_logger
 from hooply.market.pipeline import (
     DEFAULT_QUEUE_NAME,
-    DEV_SEASON_START,
-    DEV_SEASON_END,
     DEV_SEASON,
+    DEV_SEASON_END,
+    DEV_SEASON_START,
     DEV_TEAM_ABBREVIATIONS,
 )
-from hooply.market.scrapers.team_scraper import TeamRosterScraper
-from hooply.market.scrapers.game_scraper import GameScraper
-from hooply.market.scrapers.date_scraper import DateScraper
-from hooply.market.scrapers.scraper import ScrapeResultType, ScrapeResult
 from hooply.market.pipeline.data_loader import DataLoader
-from hooply.logger import setup_logger
-from peewee import Database
+from hooply.market.scrapers.date_scraper import DateScraper
+from hooply.market.scrapers.game_scraper import GameScraper
+from hooply.market.scrapers.scraper import ScrapeResult, ScrapeResultType
+from hooply.market.scrapers.team_scraper import TeamRosterScraper
 
 logger = setup_logger(__name__)
 
@@ -26,7 +27,9 @@ def ingest_team(team: str, season: str, db: Database) -> None:
     DataLoader.load_team_roster(sr, db)
 
 
-def ingest_games_in_range(start_date: str, end_date: str, db: Database) -> None:
+def ingest_games_in_range(
+    start_date: str, end_date: str, db: Database
+) -> None:
     preload_dates = date_range(start_date, end_date, freq="d").tolist()
     for date in preload_dates:
         resource = DateScraper.generate_resource()
