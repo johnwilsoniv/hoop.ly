@@ -8,8 +8,9 @@ from hooply.market.models.game_player import GamePlayerBoxscore
 from hooply.market.models.game_team import GameTeamBoxscore
 from hooply.market.models.meta_ingestion import MetaIngestion
 from hooply.market.models.player import Player
+from hooply.market.models.team import Team
 
-MODELS = (Game, GamePlayerBoxscore, GameTeamBoxscore, Player, MetaIngestion)
+MODELS = (Player, Team, Game, GamePlayerBoxscore, GameTeamBoxscore, MetaIngestion)
 logger = setup_logger(__name__)
 
 
