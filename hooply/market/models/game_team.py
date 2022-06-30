@@ -1,5 +1,6 @@
+from peewee import AutoField, DecimalField, IntegerField, TextField
+
 from hooply.market.models.base import BaseModel
-from peewee import AutoField, TextField, IntegerField, DecimalField
 
 
 class GameTeamBoxscore(BaseModel):

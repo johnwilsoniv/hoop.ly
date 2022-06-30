@@ -1,12 +1,14 @@
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
+from unittest.mock import MagicMock, Mock, patch
+
+from pytest import raises
+
 from hooply.market.scrapers.scraper import (
     RequestResources,
     ScrapeResult,
     ScrapeResultType,
 )
 from hooply.market.scrapers.team_scraper import TeamRosterScraper
-from unittest.mock import Mock, patch, MagicMock
-from pytest import raises
 
 TEST_TEAM = "BOS"
 TEST_SEASON = "2022"

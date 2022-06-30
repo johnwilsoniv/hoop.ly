@@ -1,12 +1,14 @@
-from typing import List, Dict, Tuple
+from typing import Dict, List, Tuple
+from unittest.mock import MagicMock, Mock, patch
+
+from pytest import raises
+
+from hooply.market.scrapers.game_scraper import GameScraper
 from hooply.market.scrapers.scraper import (
     RequestResources,
     ScrapeResult,
     ScrapeResultType,
 )
-from hooply.market.scrapers.game_scraper import GameScraper
-from unittest.mock import Mock, patch, MagicMock
-from pytest import raises
 
 TEST_GAME = "202206160BOS.html"
 

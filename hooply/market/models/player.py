@@ -1,5 +1,6 @@
-from hooply.market.models.base import BaseModel
 from peewee import AutoField, TextField
+
+from hooply.market.models.base import BaseModel
 
 
 class Player(BaseModel):

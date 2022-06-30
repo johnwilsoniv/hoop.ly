@@ -1,16 +1,18 @@
-from typing import List, Type
 from dataclasses import dataclass
-from bs4 import BeautifulSoup
 from enum import Enum, auto
+from os import path
+from typing import List, Type
+
+from bs4 import BeautifulSoup
 from requests import Session
 from requests.exceptions import RequestException
+
 from hooply.logger import setup_logger
 from hooply.market.pipeline import (
     DEFAULT_HOST,
     DEFAULT_REQUEST_HEADERS,
     DEFAULT_REQUEST_TIMEOUT,
 )
-from os import path
 
 logger = setup_logger(__name__)
 

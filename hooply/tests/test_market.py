@@ -1,5 +1,6 @@
+from unittest.mock import MagicMock, patch
+
 from hooply.market.market import main
-from unittest.mock import patch, MagicMock
 
 
 @patch("hooply.market.market.init_pipeline")
