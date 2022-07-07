@@ -2,12 +2,15 @@ from peewee import AutoField, DecimalField, IntegerField, TextField, ForeignKeyF
 
 from hooply.market.models.base import BaseModel
 from hooply.market.models.player import Player
+from hooply.market.models.game import Game
+from hooply.market.models.game import Team
 
 
 class GamePlayerBoxscore(BaseModel):
     id = AutoField()
     player_id = ForeignKeyField(Player, backref='player')
-    team = TextField()
+    game_id = ForeignKeyField(Game, backref='game')
+    team_id = ForeignKeyField(Team, backref='team')
     mp = TextField()
     fg = IntegerField()
     fga = IntegerField()

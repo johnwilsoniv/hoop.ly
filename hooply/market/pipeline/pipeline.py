@@ -20,7 +20,7 @@ from hooply.market.scrapers.team_scraper import TeamRosterScraper
 logger = setup_logger(__name__)
 
 
-def ingest_team(team: str, season: str, db: Database) -> None:
+def ingest_team_roster(team: str, season: str, db: Database) -> None:
     resource = TeamRosterScraper.generate_resource(team, season)
     t = TeamRosterScraper(resource)
     (sr,) = t.scrape()
@@ -40,8 +40,8 @@ def ingest_games_in_range(
         for game_link in sr.data:
             resource = GameScraper.generate_resource(game_link)
             g = GameScraper(resource=resource)
-            _, team_bs_info_sr, player_bs_info_sr = g.scrape()
-            DataLoader.load_game(team_bs_info_sr, player_bs_info_sr, db)
+            game_bs_info_sr, team_bs_info_sr, player_bs_info_sr = g.scrape()
+            DataLoader.load_game(game_bs_info_sr, team_bs_info_sr, player_bs_info_sr, db)
 
 
 def init_pipeline(db: Database) -> None:
@@ -56,8 +56,11 @@ def init_pipeline(db: Database) -> None:
     # dates = DEV
     # queue = []
 
-    # Load initial players/teams
+    # Load initial teams
+    DataLoader.load_teams(DEV_TEAM_ABBREVIATIONS, db)
+
+    # Load initial players
     for team in DEV_TEAM_ABBREVIATIONS:
-        ingest_team(team, DEV_SEASON, db)
+        ingest_team_roster(team, DEV_SEASON, db)
 
     ingest_games_in_range(DEV_SEASON_START, DEV_SEASON_END, db)
