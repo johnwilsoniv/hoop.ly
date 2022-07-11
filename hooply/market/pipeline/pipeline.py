@@ -41,7 +41,9 @@ def ingest_games_in_range(
             resource = GameScraper.generate_resource(game_link)
             g = GameScraper(resource=resource)
             game_bs_info_sr, team_bs_info_sr, player_bs_info_sr = g.scrape()
-            DataLoader.load_game(game_bs_info_sr, team_bs_info_sr, player_bs_info_sr, db)
+            DataLoader.load_game(
+                game_bs_info_sr, team_bs_info_sr, player_bs_info_sr, db
+            )
 
 
 def init_pipeline(db: Database) -> None:

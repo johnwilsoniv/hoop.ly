@@ -12,7 +12,6 @@ DEV_SEASON_START = "2022-06-02"
 DEV_SEASON_END = "2022-06-16"
 
 DEV_TEAM_ABBREVIATIONS = {
-    # "CLE": "Cleveland Cavaliers",
     "BOS": "Boston Celtics",
     "GSW": "Golden State Warriors",
 }
@@ -43,7 +42,6 @@ PROD_TEAM_ABBREVIATIONS = {
     "MIN": "Minnesota Timberwolves",
     "LAC": "Los Angeles Clippers",
     "NOP": "New Orleans Pelicans",
-    "SAS": "San Antonio Spurs",
     "LAL": "Los Angeles Lakers",
     "SAS": "San Antonio Spurs",
     "POR": "Portland Trail Blazers",

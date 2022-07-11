@@ -1,4 +1,5 @@
 from typing import Dict
+
 from peewee import Database, DatabaseError
 
 from hooply.logger import setup_logger
@@ -16,23 +17,22 @@ logger = setup_logger(__name__)
 
 class DataLoader:
     @staticmethod
-    def load_teams(
-            team_abbreviations: Dict[str, str], db: Database
-    ):
+    def load_teams(team_abbreviations: Dict[str, str], db: Database):
         with db.atomic() as txn:
             try:
                 for abbreviation, name in team_abbreviations.items():
-                    t = Team.create(
-                        abbreviation=abbreviation, name=name
-                    )
+                    t = Team.create(abbreviation=abbreviation, name=name)
                     logger.info("Created team record (%s)", t)
             except DatabaseError:
                 txn.rollback()
 
     @staticmethod
     def load_game(
-        game_sr: ScrapeResult, team_sr: ScrapeResult, player_sr: ScrapeResult, db: Database
-    ) -> None:
+        game_sr: ScrapeResult,
+        team_sr: ScrapeResult,
+        player_sr: ScrapeResult,
+        db: Database,
+    ) -> Game:
         if (
             team_sr.result_type != ScrapeResultType.teams_boxscore
             or player_sr.result_type != ScrapeResultType.players_boxscore
@@ -43,7 +43,10 @@ class DataLoader:
         home_team_info, away_team_info = game_sr.data
         home_team_name, home_team_pts, _ = home_team_info
         away_team_name, away_team_pts, _ = away_team_info
-        home_team_id, away_team_id = Team.select(Team.id).where(Team.name == home_team_name).get(), Team.select(Team.id).where(Team.name == away_team_name).get()
+        home_team_id, away_team_id = (
+            Team.select(Team.id).where(Team.name == home_team_name).get(),
+            Team.select(Team.id).where(Team.name == away_team_name).get(),
+        )
         game = None
 
         with db.atomic() as txn:
@@ -59,7 +62,9 @@ class DataLoader:
         with db.atomic() as txn:
             try:
                 for team in team_sr.data:
-                    team_record = Team.select().where(Team.abbreviation == team).get()
+                    team_record = (
+                        Team.select().where(Team.abbreviation == team).get()
+                    )
                     home_team_record = game.home_team_id
 
                     if team_record.id == home_team_record.id:
@@ -69,12 +74,17 @@ class DataLoader:
                         pts = away_team_pts
                         opp_pts = home_team_pts
 
-
                     pace, efg, ortg = team_sr.data[team]
                     drtg = round((float(opp_pts) / float(pace)), 2) * 100
                     gbs = GameTeamBoxscore.create(
-                        team_id=team_record.id, pace=pace, efg=efg, ortg=ortg, drtg=drtg, pts=pts, opp_pts=opp_pts,
-                        game_id=game.id
+                        team_id=team_record.id,
+                        pace=pace,
+                        efg=efg,
+                        ortg=ortg,
+                        drtg=drtg,
+                        pts=pts,
+                        opp_pts=opp_pts,
+                        game_id=game.id,
                     )
                     logger.info("Created game boxscore record (%s)", gbs)
             except DatabaseError:
@@ -84,7 +94,11 @@ class DataLoader:
         with db.atomic() as txn:
             try:
                 for team_abbreviation in player_sr.data:
-                    team = Team.select().where(Team.abbreviation == team_abbreviation).get()
+                    team = (
+                        Team.select()
+                        .where(Team.abbreviation == team_abbreviation)
+                        .get()
+                    )
                     for player_bs in player_sr.data[team_abbreviation]:
                         (
                             name,
@@ -144,6 +158,8 @@ class DataLoader:
         #         txn.commit()
         #     except DatabaseError:
         #         txn.rollback()
+
+        return game
 
     @staticmethod
     def load_team_roster(s: ScrapeResult, db: Database) -> None:
