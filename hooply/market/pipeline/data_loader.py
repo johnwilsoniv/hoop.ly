@@ -17,6 +17,11 @@ logger = setup_logger(__name__)
 
 class DataLoader:
     @staticmethod
+    def load_bipm(game: Game, db: Database):
+        pass
+
+
+    @staticmethod
     def load_teams(team_abbreviations: Dict[str, str], db: Database):
         with db.atomic() as txn:
             try:
@@ -65,7 +70,7 @@ class DataLoader:
                     team_record = (
                         Team.select().where(Team.abbreviation == team).get()
                     )
-                    home_team_record = game.home_team_id
+                    home_team_record = game.home_team
 
                     if team_record.id == home_team_record.id:
                         pts = home_team_pts

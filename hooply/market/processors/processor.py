@@ -12,12 +12,3 @@ class Processor(Protocol):
         team_boxscore: List[GameTeamBoxscore],
     ) -> List[Type]:
         ...
-
-
-class BIPMProcessor(Processor):
-    def calculate_score(
-        self,
-        player_boxscores: List[GamePlayerBoxscore],
-        team_boxscore: List[GameTeamBoxscore],
-    ) -> List[Type]:
-        return []

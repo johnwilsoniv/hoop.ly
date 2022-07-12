@@ -44,6 +44,8 @@ def ingest_games_in_range(
             DataLoader.load_game(
                 game_bs_info_sr, team_bs_info_sr, player_bs_info_sr, db
             )
+            logger.info("Breaking after first game.")
+            break
 
 
 def init_pipeline(db: Database) -> None:

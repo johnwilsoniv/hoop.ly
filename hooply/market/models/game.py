@@ -6,6 +6,6 @@ from hooply.market.models.team import Team
 
 class Game(BaseModel):
     id = AutoField()
-    home_team_id = ForeignKeyField(Team, backref="team")
+    home_team = ForeignKeyField(Team, backref="team")
     away_team = ForeignKeyField(Team, backref="team")
     date = TimestampField()

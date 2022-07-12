@@ -7,8 +7,8 @@ from hooply.market.models.team import Team
 
 class GameTeamBoxscore(BaseModel):
     id = AutoField()
-    team_id = ForeignKeyField(Team, backref="team")
-    game_id = ForeignKeyField(Game, backref="game")
+    team = ForeignKeyField(Team, backref="team")
+    game = ForeignKeyField(Game, backref="game")
     pace = DecimalField()
     pts = DecimalField()
     opp_pts = DecimalField()
