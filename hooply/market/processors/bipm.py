@@ -4,7 +4,7 @@ from hooply.market.models.game_team import GameTeamBoxscore
 from hooply.market.models.game_team import Game
 from hooply.market.processors.coefficient import Coefficient
 from hooply.market.processors import *
-from typing import List, Type
+from typing import List, Type, Tuple, Any
 from operator import mul
 from decimal import Decimal
 
@@ -28,6 +28,16 @@ POS_MAP = {
     'PF': 4,
     'C': 5
 }
+
+BASELINE_PTS_TSA = Decimal(1.00)
+
+
+def calculate_tsa(fga: int, fta: int) -> Decimal:
+    return Decimal(fga + FTA_VALUE * fta)
+
+
+def adjust_pts(pts:Decimal, pts_tsa:Decimal, team_pts_tsa:Decimal, baseline_pts_tsa: Decimal):
+    return pts + (baseline_pts_tsa - team_pts_tsa) * pts_tsa
 
 
 def calculate_per_100(stat: Decimal, minutes: Decimal, pace: Decimal) -> Decimal:
@@ -68,28 +78,44 @@ class BIPMProcessor:
         },
     }
 
-    def raw_bpm(self, player_bs: GamePlayerBoxscore, team_bs: GameTeamBoxscore) -> None:
+    def raw_bpm(self, players_bs: List[GamePlayerBoxscore], team_bs: GameTeamBoxscore, team_pts_tsa: Decimal) -> List[
+        Tuple[Any]]:
 
-        mp = extract_minutes_played(player_bs.mp)
-        pace = Decimal(team_bs.pace)
-        coefficients = []
-        stats_per100 = []
+        raw_bpms = []
+        for player_bs in players_bs:
+            mp = extract_minutes_played(player_bs.mp)
+            pace = Decimal(team_bs.pace)
+            # Use listed position as position/offensive role for now
+            role = position = POS_MAP[player_bs.player.position]
+            coefficients = []
+            stats_per100 = []
+        #
+            for stat in BIPM_POS_STATS:
+                stat_bs = player_bs.__getattribute__(stat)
+                if stat == 'pts':
+                    #Adjust pts for offensive role
+                    pts_tsa = calculate_tsa(player_bs.fga, player_bs.fta)
+                    stat_bs = adjust_pts(stat_bs, pts_tsa, team_pts_tsa, BASELINE_PTS_TSA)
 
-        for stat in BIPM_POS_STATS:
-            stat_per100 = calculate_per_100(player_bs.__getattribute__(stat), mp, pace)
-            coefficient = BIPMProcessor.COEFFICIENTS['position'][stat].get_coefficient(2.6)
+                stat_per100 = calculate_per_100(stat_bs, mp, pace)
+                coefficient = BIPMProcessor.COEFFICIENTS['position'][stat].get_coefficient(position)
 
-            stats_per100.append(stat_per100)
-            coefficients.append(coefficient)
+                stats_per100.append(stat_per100)
+                coefficients.append(coefficient)
+        #
+            for stat in BIPM_ROLE_STATS:
+                stat_bs = player_bs.__getattribute__(stat)
+                stat_per100 = calculate_per_100(stat_bs, mp, pace)
+                coefficient = BIPMProcessor.COEFFICIENTS['role'][stat].get_coefficient(role)
 
-        for stat in BIPM_ROLE_STATS:
-            stat_per100 = calculate_per_100(player_bs.__getattribute__(stat), mp, pace)
-            coefficient = BIPMProcessor.COEFFICIENTS['role'][stat].get_coefficient(3.1)
+                stats_per100.append(stat_per100)
+                coefficients.append(coefficient)
 
-            stats_per100.append(stat_per100)
-            coefficients.append(coefficient)
-
-        print()
+            raw_bpm_breakdown = list(map(mul, stats_per100, coefficients))
+            raw_bpm = sum(raw_bpm_breakdown)
+            raw_bpms.append((player_bs.player.name, player_bs.game.id, raw_bpm, mp))
+        #
+        return raw_bpms
 
 
     def calculate_score(
@@ -101,17 +127,22 @@ class BIPMProcessor:
         team_bs_query = GameTeamBoxscore.select().where(GameTeamBoxscore.game_id == game.id)
         player_bs_query = GamePlayerBoxscore.select().where(GamePlayerBoxscore.game_id == game.id)
 
-        teams_bs: List[GameTeamBoxscore]  = [res for res in team_bs_query]
-        player_bs: List[GamePlayerBoxscore] = [res for res in player_bs_query]
+        teams_bs: List[GameTeamBoxscore] = [res for res in team_bs_query]
+        teams_player_bs: List[List[GamePlayerBoxscore], GamePlayerBoxscore] = [[], []]
 
-        for pbs in player_bs:
-            #
-            if pbs.team_id == teams_bs[0].team_id:
-                tbs = teams_bs[0]
+        # Extract player boxscores for each team
+        for player_bs in player_bs_query:
+            if player_bs.team_id == teams_bs[0].team_id:
+                teams_player_bs[0].append(player_bs)
             else:
-                tbs = teams_bs[1]
+                teams_player_bs[1].append(player_bs)
 
-            raw_bpm = self.raw_bpm(pbs, tbs)
+        for i in range(2):
+            # Calculate team true shooting attempts
+            team_tsa = calculate_tsa(sum([t.fga for t in teams_player_bs[i]]), sum([t.fta for t in teams_player_bs[i]]))
+            team_pts_tsa = teams_bs[i].pts / team_tsa
+
+            self.raw_bpm(teams_player_bs[i], teams_bs[i], team_pts_tsa)
 
         return []
 

@@ -1,8 +1,11 @@
-MPG = 48.00
+from decimal import Decimal
+
+MPG = Decimal(48.00)
 PER100 = 100
 
 START_POS = 1
 END_POS = 5
+FTA_VALUE = Decimal(0.44)
 
 BIPM_POS_STATS = ['pts', 'tpg', 'ast', 'tov', 'orb', 'drb', 'stl', 'blk', 'pf']
 BIPM_ROLE_STATS = ['fga', 'fta']
