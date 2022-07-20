@@ -78,6 +78,23 @@ class BIPMProcessor:
         },
     }
 
+    def _some_function(self, stats_per100: List, coefficients: List, stat_names: List[str], player_bs: GamePlayerBoxscore, role_or_position_name:str, mp: Decimal, pace: Decimal, team_pts_tsa: Decimal):
+        for stat in stat_names:
+            stat_bs = player_bs.__getattribute__(stat)
+            if stat == 'pts':
+                #Adjust pts for offensive role
+                pts_tsa = calculate_tsa(player_bs.fga, player_bs.fta)
+                stat_bs = adjust_pts(stat_bs, pts_tsa, team_pts_tsa, BASELINE_PTS_TSA)
+
+            stat_per100 = calculate_per_100(stat_bs, mp, pace)
+            # TO-DO: Use listed position as position/offensive role for now
+            role_or_position = POS_MAP[player_bs.player.position]
+
+            coefficient = BIPMProcessor.COEFFICIENTS[role_or_position_name][stat].get_coefficient(role_or_position)
+
+            stats_per100.append(stat_per100)
+            coefficients.append(coefficient)
+
     def raw_bpm(self, players_bs: List[GamePlayerBoxscore], team_bs: GameTeamBoxscore, team_pts_tsa: Decimal) -> List[
         Tuple[Any]]:
 
@@ -85,36 +102,17 @@ class BIPMProcessor:
         for player_bs in players_bs:
             mp = extract_minutes_played(player_bs.mp)
             pace = Decimal(team_bs.pace)
-            # Use listed position as position/offensive role for now
-            role = position = POS_MAP[player_bs.player.position]
+
             coefficients = []
             stats_per100 = []
-        #
-            for stat in BIPM_POS_STATS:
-                stat_bs = player_bs.__getattribute__(stat)
-                if stat == 'pts':
-                    #Adjust pts for offensive role
-                    pts_tsa = calculate_tsa(player_bs.fga, player_bs.fta)
-                    stat_bs = adjust_pts(stat_bs, pts_tsa, team_pts_tsa, BASELINE_PTS_TSA)
 
-                stat_per100 = calculate_per_100(stat_bs, mp, pace)
-                coefficient = BIPMProcessor.COEFFICIENTS['position'][stat].get_coefficient(position)
-
-                stats_per100.append(stat_per100)
-                coefficients.append(coefficient)
-        #
-            for stat in BIPM_ROLE_STATS:
-                stat_bs = player_bs.__getattribute__(stat)
-                stat_per100 = calculate_per_100(stat_bs, mp, pace)
-                coefficient = BIPMProcessor.COEFFICIENTS['role'][stat].get_coefficient(role)
-
-                stats_per100.append(stat_per100)
-                coefficients.append(coefficient)
+            self._some_function(stats_per100, coefficients, BIPM_POS_STATS, player_bs, 'position', mp, pace, team_pts_tsa)
+            self._some_function(stats_per100, coefficients, BIPM_ROLE_STATS, player_bs, 'role', mp, pace, None)
 
             raw_bpm_breakdown = list(map(mul, stats_per100, coefficients))
             raw_bpm = sum(raw_bpm_breakdown)
             raw_bpms.append((player_bs.player.name, player_bs.game.id, raw_bpm, mp))
-        #
+
         return raw_bpms
 
 
@@ -142,7 +140,7 @@ class BIPMProcessor:
             team_tsa = calculate_tsa(sum([t.fga for t in teams_player_bs[i]]), sum([t.fta for t in teams_player_bs[i]]))
             team_pts_tsa = teams_bs[i].pts / team_tsa
 
-            self.raw_bpm(teams_player_bs[i], teams_bs[i], team_pts_tsa)
+            raw_bpms = self.raw_bpm(teams_player_bs[i], teams_bs[i], team_pts_tsa)
 
         return []
 
