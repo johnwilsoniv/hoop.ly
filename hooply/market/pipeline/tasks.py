@@ -32,8 +32,9 @@ class IngestGameTask(IngestionTask):
             # Scrape box score from each game
             resource = GameScraper.generate_resource(game_link)
             g = GameScraper(resource=resource)
-            _, team_bs_info_sr, player_bs_info_sr = g.scrape()
-            # DataLoader.load_game(team_bs_info_sr, player_bs_info_sr, self.db)
+            game_info_sr, team_bs_info_sr, player_bs_info_sr = g.scrape()
+            game = self.loader.load_game(game_info_sr, team_bs_info_sr, player_bs_info_sr, self.db)
+            # self.processor.calculate_score(game)
 
 
 class IngestTeamsTask(IngestionTask):

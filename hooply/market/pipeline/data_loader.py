@@ -31,19 +31,10 @@ class DataLoader:
             except DatabaseError:
                 txn.rollback()
 
-    @staticmethod
     def load_game(
-<<<<<<< Updated upstream
-        game_sr: ScrapeResult,
-        team_sr: ScrapeResult,
-        player_sr: ScrapeResult,
-        db: Database,
-    ) -> Game:
-=======
             self,
-            team_sr: ScrapeResult, player_sr: ScrapeResult, db: Database
-    ) -> None:
->>>>>>> Stashed changes
+            game_sr: ScrapeResult, team_sr: ScrapeResult, player_sr: ScrapeResult, db: Database
+    ) -> Game:
         if (
                 team_sr.result_type != ScrapeResultType.teams_boxscore
                 or player_sr.result_type != ScrapeResultType.players_boxscore
@@ -170,14 +161,9 @@ class DataLoader:
         #     except DatabaseError:
         #         txn.rollback()
 
-<<<<<<< Updated upstream
         return game
 
-    @staticmethod
-    def load_team_roster(s: ScrapeResult, db: Database) -> None:
-=======
     def load_team_roster(self, s: ScrapeResult, db: Database) -> None:
->>>>>>> Stashed changes
         if s.result_type != ScrapeResultType.player:
             logger.error("Replace.")
             exit(1)
@@ -198,7 +184,6 @@ class DataLoader:
             except DatabaseError:
                 txn.rollback()
 
-<<<<<<< Updated upstream
         # with db.atomic() as txn:
         #     try:
         #         m = MetaIngestion.create(type="player")
@@ -207,8 +192,6 @@ class DataLoader:
         #     except DatabaseError:
         #         txn.rollback()
 
-    @staticmethod
-=======
         with db.atomic() as txn:
             try:
                 m = MetaIngestion.create(type="player")
@@ -217,6 +200,5 @@ class DataLoader:
             except DatabaseError:
                 txn.rollback()
 
->>>>>>> Stashed changes
-    def _load_bipm(s: ScrapeResult) -> None:
+    def _load_bipm(self, s: ScrapeResult) -> None:
         raise NotImplementedError

@@ -9,19 +9,17 @@ from hooply.market.pipeline import (
     DEV_TEAM_ABBREVIATIONS,
     PROD_SEASON,
     PROD_SEASON_START,
-    PROD_SEASON_END,
     PROD_TEAM_ABBREVIATIONS,
 )
-from hooply.market.pipeline.data_loader import DataLoader
-from hooply.market.scrapers.date_scraper import DateScraper
-from hooply.market.scrapers.game_scraper import GameScraper
-from hooply.market.scrapers.scraper import ScrapeResult, ScrapeResultType
-from hooply.market.scrapers.team_scraper import TeamRosterScraper
+
 from hooply.market.pipeline.tasks import IngestTeamsTask, IngestGameTask
 import os
 
+logger = setup_logger(__name__)
+
 
 def init_pipeline(db: Database) -> None:
+    logger.info("Initializing data pipelines.")
 
     if os.environ.get('ENV') == 'production':
         season = PROD_SEASON
@@ -41,9 +39,10 @@ def init_pipeline(db: Database) -> None:
     initial_games = [IngestGameTask(date, db) for date in preload_dates]
     initial_teams = IngestTeamsTask(team_abbreviations, season, db)
 
-    queue += [initial_games]
+    # queue += initial_games
     queue += [initial_teams]
 
     while queue:
         task = queue.pop()
+        logger.info("Running task (%s)", task)
         task.run()
