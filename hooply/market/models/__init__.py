@@ -18,6 +18,7 @@ MODELS = (
     GameTeamBoxscore,
     MetaIngestion,
 )
+
 logger = setup_logger(__name__)
 
 
