@@ -14,7 +14,7 @@ from hooply.market.pipeline import (
     PROD_TEAM_ABBREVIATIONS,
 )
 
-from hooply.market.pipeline.tasks import IngestTeamsTask, IngestGameTask
+from hooply.market.pipeline.ingestion_tasks import IngestTeamsTask, IngestGameTask
 import os
 
 logger = setup_logger(__name__)

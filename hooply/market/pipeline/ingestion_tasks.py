@@ -1,4 +1,4 @@
-from typing import Protocol, List, Dict
+from typing import Protocol, Dict, runtime_checkable
 from peewee import Database
 from pandas import Timestamp
 from hooply.market.scrapers.date_scraper import DateScraper
@@ -7,7 +7,7 @@ from hooply.market.scrapers.team_scraper import TeamRosterScraper
 from hooply.market.processors.bipm import BIPMProcessor
 from hooply.market.pipeline.data_loader import DataLoader
 
-
+@runtime_checkable
 class IngestionTask(Protocol):
     def run(self):
         pass
