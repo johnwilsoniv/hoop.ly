@@ -25,7 +25,7 @@ def test_ingestion_teams_task(mock_loader, mock_tr_scraper_cls):
     mock_teams_task = IngestTeamsTask(MOCK_TEAMS, MOCK_SEASON, MOCK_DB)
     mock_scraper = Mock(name="scraper")
     mock_sr = ScrapeResult(ScrapeResultType.player, [])
-    mock_scraper.scrape.return_value = mock_sr
+    mock_scraper.scrape.return_value = [mock_sr]
 
     mock_tr_scraper_cls.generate_resource.return_value = None
     mock_tr_scraper_cls.return_value = mock_scraper

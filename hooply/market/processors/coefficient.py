@@ -15,4 +15,4 @@ class Coefficient:
     def get_coefficient(self, pos: float) -> Decimal:
         if pos < START_POS or pos > END_POS:
             exit(1)
-        return Decimal(self.slope * pos + self.b)
+        return round(Decimal(self.slope * pos + self.b), 2)
