@@ -16,13 +16,8 @@ logger = setup_logger(__name__)
 
 
 class DataLoader:
-    @staticmethod
-    def load_bipm(game: Game, db: Database):
-        pass
 
-
-    @staticmethod
-    def load_teams(team_abbreviations: Dict[str, str], db: Database):
+    def load_teams(self, team_abbreviations: Dict[str, str], db: Database):
         with db.atomic() as txn:
             try:
                 for abbreviation, name in team_abbreviations.items():

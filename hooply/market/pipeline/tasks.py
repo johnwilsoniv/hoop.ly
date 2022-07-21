@@ -1,4 +1,4 @@
-from typing import Protocol, List
+from typing import Protocol, List, Dict
 from peewee import Database
 from pandas import Timestamp
 from hooply.market.scrapers.date_scraper import DateScraper
@@ -38,13 +38,17 @@ class IngestGameTask(IngestionTask):
 
 
 class IngestTeamsTask(IngestionTask):
-    def __init__(self, teams:List[str], season: str, db: Database):
+    def __init__(self, teams: Dict[str, str], season: str, db: Database):
         self.teams = teams
         self.season = season
         self.db = db
         self.loader = DataLoader()
 
     def run(self):
+        # Load all teams
+        self.loader.load_teams(self.teams, self.db)
+
+        # Load all players currently on a roster
         for team in self.teams:
             resource = TeamRosterScraper.generate_resource(team, self.season)
             t = TeamRosterScraper(resource)

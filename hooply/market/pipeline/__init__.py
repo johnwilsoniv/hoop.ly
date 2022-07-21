@@ -7,13 +7,13 @@ DEFAULT_HOST = "https://www.basketball-reference.com"
 # Pipeline variables
 DEFAULT_QUEUE_NAME = "daily-ingestion-queue"
 
-DEV_SEASON = "2017"
-DEV_SEASON_START = "2016-12-25"
-DEV_SEASON_END = "2016-12-25"
+DEV_SEASON = "2022"
+DEV_SEASON_START = "2022-06-02"
+DEV_SEASON_END = "2022-06-16"
 
 DEV_TEAM_ABBREVIATIONS = {
-    # "BOS": "Boston Celtics",
-    "CLE": "Cleveland Cavaliers",
+    "BOS": "Boston Celtics",
+    # "CLE": "Cleveland Cavaliers",
     "GSW": "Golden State Warriors",
 }
 

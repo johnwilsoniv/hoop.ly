@@ -1,3 +1,5 @@
+import time
+
 from pandas import date_range
 from peewee import Database
 from hooply.logger import setup_logger
@@ -39,10 +41,11 @@ def init_pipeline(db: Database) -> None:
     initial_games = [IngestGameTask(date, db) for date in preload_dates]
     initial_teams = IngestTeamsTask(team_abbreviations, season, db)
 
-    # queue += initial_games
     queue += [initial_teams]
+    queue += initial_games
 
     while queue:
-        task = queue.pop()
+        task = queue.pop(0)
+        time.sleep(5)
         logger.info("Running task (%s)", task)
         task.run()
