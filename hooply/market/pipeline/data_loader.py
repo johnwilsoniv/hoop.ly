@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List, Any
 
 from peewee import Database, DatabaseError
 
@@ -17,7 +17,7 @@ logger = setup_logger(__name__)
 
 class DataLoader:
 
-    def load_teams(self, team_abbreviations: Dict[str, str], db: Database):
+    def load_teams(self, team_abbreviations: Dict[str, str], db: Database) -> None:
         with db.atomic() as txn:
             try:
                 for abbreviation, name in team_abbreviations.items():
@@ -195,5 +195,17 @@ class DataLoader:
             except DatabaseError:
                 txn.rollback()
 
-    def _load_bipm(self, s: ScrapeResult) -> None:
-        raise NotImplementedError
+    def load_bipm(self, player_bpms: List[Any], db: Database) -> None:
+
+        with db.atomic() as txn:
+            try:
+                rows = []
+                for player_bpm in player_bpms:
+                    player_bs, bpm = player_bpm
+                    player_bs.bpm = bpm
+
+                    rows.append(player_bs)
+
+                GamePlayerBoxscore.bulk_update(rows, fields=[GamePlayerBoxscore.bpm])
+            except DatabaseError:
+                txn.rollback()

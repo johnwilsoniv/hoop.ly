@@ -13,8 +13,8 @@ from hooply.market.pipeline import (
     PROD_SEASON_START,
     PROD_TEAM_ABBREVIATIONS,
 )
-
-from hooply.market.pipeline.ingestion_tasks import IngestTeamsTask, IngestGameTask
+from hooply.market.scrapers.scraper import ScrapeResult
+from hooply.market.pipeline.tasks import IngestTeamsTask, IngestGameTask, GetGamesTask
 import os
 
 logger = setup_logger(__name__)
@@ -38,14 +38,28 @@ def init_pipeline(db: Database) -> None:
     # Setup initial taskse
     queue = []
     preload_dates = date_range(season_start, season_end, freq="d").tolist()
-    initial_games = [IngestGameTask(date, db) for date in preload_dates]
-    initial_teams = IngestTeamsTask(team_abbreviations, season, db)
 
-    queue += [initial_teams]
-    queue += initial_games
+    initial_dates = [GetGamesTask(date, db) for date in preload_dates]
+    initial_teams = [IngestTeamsTask(team_abbreviations, season, db)]
+
+    queue += initial_teams
+    queue += initial_dates
 
     while queue:
         task = queue.pop(0)
         time.sleep(5)
         logger.info("Running task (%s)", task)
-        task.run()
+        res = task.run()
+
+        if res is None:
+            continue
+        else:
+            # Task has children
+            if isinstance(task, GetGamesTask):
+                ingest_game_tasks = []
+                for game_link in res.data:
+                    ingest_game_tasks.append(IngestGameTask(game_link, db))
+
+                if ingest_game_tasks:
+                    logger.info("Adding the following tasks into the queue: (%s)", ingest_game_tasks)
+                    queue.extend(ingest_game_tasks)

@@ -78,7 +78,7 @@ class BIPMProcessor:
         },
     }
 
-    def _some_function(self, stats_per100: List, coefficients: List, stat_names: List[str], player_bs: GamePlayerBoxscore, role_or_position_name:str, mp: Decimal, pace: Decimal, team_pts_tsa: Decimal):
+    def genereate_per100_and_coefficients(self, stats_per100: List, coefficients: List, stat_names: List[str], player_bs: GamePlayerBoxscore, role_or_position_name:str, mp: Decimal, pace: Decimal, team_pts_tsa: Decimal):
         for stat in stat_names:
             stat_bs = player_bs.__getattribute__(stat)
             if stat == 'pts':
@@ -95,10 +95,23 @@ class BIPMProcessor:
             stats_per100.append(stat_per100)
             coefficients.append(coefficient)
 
-    def raw_bpm(self, players_bs: List[GamePlayerBoxscore], team_bs: GameTeamBoxscore, team_pts_tsa: Decimal) -> List[
+    def team_adjusted_coefficient(self, nrtg: Decimal, raw_data: List[Tuple[Any, Any, Any]]):
+        team_mp = sum([d[2] for d in raw_data])
+        contributions = []
+        for d in  raw_data:
+            _, raw_bpm, mp = d
+            contribution = ((Decimal(5) * mp) / team_mp) * raw_bpm
+            contributions.append(contribution)
+
+        res = (nrtg + Decimal(1.20) - sum(contributions)) / Decimal(5)
+        return res
+
+    def bpm(self, players_bs: List[GamePlayerBoxscore], team_bs: GameTeamBoxscore, team_pts_tsa: Decimal) -> List[
         Tuple[Any]]:
 
-        raw_bpms = []
+        raw_data = []
+        netrtg = team_bs.ortg - team_bs.drtg
+
         for player_bs in players_bs:
             mp = extract_minutes_played(player_bs.mp)
             pace = Decimal(team_bs.pace)
@@ -106,21 +119,29 @@ class BIPMProcessor:
             coefficients = []
             stats_per100 = []
 
-            self._some_function(stats_per100, coefficients, BIPM_POS_STATS, player_bs, 'position', mp, pace, team_pts_tsa)
-            self._some_function(stats_per100, coefficients, BIPM_ROLE_STATS, player_bs, 'role', mp, pace, None)
+            self.genereate_per100_and_coefficients(stats_per100, coefficients, BIPM_POS_STATS, player_bs, 'position', mp, pace, team_pts_tsa)
+            self.genereate_per100_and_coefficients(stats_per100, coefficients, BIPM_ROLE_STATS, player_bs, 'role', mp, pace, None)
 
             raw_bpm_breakdown = list(map(mul, stats_per100, coefficients))
             raw_bpm = sum(raw_bpm_breakdown)
-            raw_bpms.append((player_bs.player.name, player_bs.game.id, raw_bpm, mp))
+            raw_data.append((player_bs, raw_bpm, mp))
 
-        return raw_bpms
+        team_adjc = self.team_adjusted_coefficient(netrtg, raw_data)
+
+        bpms = []
+        for data in raw_data:
+            player_bs, raw_bpm, _ = data
+            bpm = raw_bpm + team_adjc
+            bpms.append((player_bs, bpm))
+
+        return bpms
 
 
     def calculate_score(
         self,
         game: Game
     ) -> List[Type]:
-        bpms = dict()
+        team_bpms = []
 
         team_bs_query = GameTeamBoxscore.select().where(GameTeamBoxscore.game_id == game.id)
         player_bs_query = GamePlayerBoxscore.select().where(GamePlayerBoxscore.game_id == game.id)
@@ -140,9 +161,9 @@ class BIPMProcessor:
             team_tsa = calculate_tsa(sum([t.fga for t in teams_player_bs[i]]), sum([t.fta for t in teams_player_bs[i]]))
             team_pts_tsa = teams_bs[i].pts / team_tsa
 
-            raw_bpms = self.raw_bpm(teams_player_bs[i], teams_bs[i], team_pts_tsa)
+            team_bpms += self.bpm(teams_player_bs[i], teams_bs[i], team_pts_tsa)
 
-        return []
+        return team_bpms
 
 
 if __name__ == '__main__':

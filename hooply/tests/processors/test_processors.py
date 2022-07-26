@@ -9,3 +9,10 @@ def test_bipm_processor_subclass():
 def test_bipm_processor_return_type():
     b = BIPMProcessor()
     # assert b.calculate_score([], []) == []
+    assert True
+
+
+def test_bipm_team_adjusted_coefficient():
+    b = BIPMProcessor()
+    # netrg = Dei
+    assert True

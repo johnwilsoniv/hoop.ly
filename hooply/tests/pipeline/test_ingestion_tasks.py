@@ -1,4 +1,4 @@
-from hooply.market.pipeline.ingestion_tasks import IngestionTask, IngestTeamsTask, IngestGameTask
+from hooply.market.pipeline.tasks import IngestionTask, IngestTeamsTask, IngestGameTask
 from hooply.market.scrapers.scraper import ScrapeResult, ScrapeResultType
 from unittest.mock import MagicMock, Mock, patch
 from peewee import Database, SqliteDatabase

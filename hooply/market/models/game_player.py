@@ -26,3 +26,4 @@ class GamePlayerBoxscore(BaseModel):
     pf = IntegerField()
     pts = IntegerField()
     pm = IntegerField()
+    bpm = DecimalField(null=True)
